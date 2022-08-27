@@ -1,1 +1,3 @@
-# Kogane.ReflectionMembersUtils
+# Kogane Reflection Members Utils
+
+リフレクションでクラスや構造体のすべてのフィールドとプロパティの情報を取得するクラス
