@@ -39,15 +39,17 @@ namespace Kogane
             {
                 if ( IsBackingField( fieldInfo ) ) continue;
 
-                var name  = fieldInfo.Name;
-                var value = fieldInfo.GetValue( self );
+                var name      = fieldInfo.Name;
+                var value     = fieldInfo.GetValue( self );
+                var fieldType = fieldInfo.FieldType;
 
-                if ( IsBuiltInType( fieldInfo.FieldType ) )
+                if ( IsBuiltInType( fieldType ) )
                 {
                     dictionary.Add( name, value );
                 }
-                else if ( fieldInfo.FieldType.IsArray )
+                else if ( fieldType.IsArray )
                 {
+                    var elementType = fieldType.GetElementType();
                 }
                 else
                 {
