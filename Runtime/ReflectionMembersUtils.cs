@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -31,11 +32,49 @@ namespace Kogane
                 includeStatic: includeStatic
             );
 
-            return self
-                    .GetType()
-                    .GetFields( bindingAttr )
-                    .Where( x => !IsBackingField( x ) )
-                    .ToDictionary( x => x.Name, x => x.GetValue( self ) )
+            var type       = self.GetType();
+            var dictionary = new Dictionary<string, object>();
+
+            foreach ( var fieldInfo in type.GetFields( bindingAttr ) )
+            {
+                if ( IsBackingField( fieldInfo ) ) continue;
+
+                var name  = fieldInfo.Name;
+                var value = fieldInfo.GetValue( self );
+
+                if ( IsBuiltInType( fieldInfo.FieldType ) )
+                {
+                    dictionary.Add( name, value );
+                }
+                else if ( fieldInfo.FieldType.IsArray )
+                {
+                }
+                else
+                {
+                    dictionary.Add( name, GetFields( value, includePublic, includeNonPublic, includeStatic ) );
+                }
+            }
+
+            return dictionary;
+        }
+
+        private static bool IsBuiltInType( Type type )
+        {
+            return
+                type == typeof( bool ) ||
+                type == typeof( byte ) ||
+                type == typeof( sbyte ) ||
+                type == typeof( char ) ||
+                type == typeof( decimal ) ||
+                type == typeof( double ) ||
+                type == typeof( float ) ||
+                type == typeof( int ) ||
+                type == typeof( uint ) ||
+                type == typeof( long ) ||
+                type == typeof( ulong ) ||
+                type == typeof( short ) ||
+                type == typeof( ushort ) ||
+                type == typeof( string )
                 ;
         }
 
