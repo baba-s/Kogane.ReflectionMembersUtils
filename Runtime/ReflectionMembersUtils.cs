@@ -90,6 +90,28 @@ namespace Kogane
                         dictionary.Add( name, arrayDictionaryList );
                     }
                 }
+                else if ( fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof( Dictionary<,> ) )
+                {
+                    var keyType   = fieldType.GenericTypeArguments[ 0 ];
+                    var valueType = fieldType.GenericTypeArguments[ 1 ];
+
+                    if ( IsBuiltInType( keyType ) && IsBuiltInType( valueType ) )
+                    {
+                        dictionary.Add( name, value );
+                    }
+                    // else
+                    // {
+                    //     var array               = ( IList )value;
+                    //     var arrayDictionaryList = new List<Dictionary<string, object>>();
+                    //
+                    //     foreach ( var element in array )
+                    //     {
+                    //         arrayDictionaryList.Add( GetFields( element, includePublic, includeNonPublic, includeStatic ) );
+                    //     }
+                    //
+                    //     dictionary.Add( name, arrayDictionaryList );
+                    // }
+                }
                 else
                 {
                     dictionary.Add( name, GetFields( value, includePublic, includeNonPublic, includeStatic ) );
