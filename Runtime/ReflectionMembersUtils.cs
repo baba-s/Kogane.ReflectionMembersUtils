@@ -50,6 +50,23 @@ namespace Kogane
                 else if ( fieldType.IsArray )
                 {
                     var elementType = fieldType.GetElementType();
+
+                    if ( IsBuiltInType( elementType ) )
+                    {
+                        dictionary.Add( name, value );
+                    }
+                    else
+                    {
+                        var array               = ( Array )value;
+                        var arrayDictionaryList = new List<Dictionary<string, object>>();
+
+                        foreach ( var element in array )
+                        {
+                            arrayDictionaryList.Add( GetFields( element, includePublic, includeNonPublic, includeStatic ) );
+                        }
+
+                        dictionary.Add( name, arrayDictionaryList );
+                    }
                 }
                 else
                 {
