@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -58,6 +59,27 @@ namespace Kogane
                     else
                     {
                         var array               = ( Array )value;
+                        var arrayDictionaryList = new List<Dictionary<string, object>>();
+
+                        foreach ( var element in array )
+                        {
+                            arrayDictionaryList.Add( GetFields( element, includePublic, includeNonPublic, includeStatic ) );
+                        }
+
+                        dictionary.Add( name, arrayDictionaryList );
+                    }
+                }
+                else if ( fieldType.IsGenericType && fieldType.GetGenericTypeDefinition() == typeof( List<> ) )
+                {
+                    var elementType = fieldType.GenericTypeArguments[ 0 ];
+
+                    if ( IsBuiltInType( elementType ) )
+                    {
+                        dictionary.Add( name, value );
+                    }
+                    else
+                    {
+                        var array               = ( IList )value;
                         var arrayDictionaryList = new List<Dictionary<string, object>>();
 
                         foreach ( var element in array )
